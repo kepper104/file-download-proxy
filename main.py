@@ -1,12 +1,18 @@
 from flask import Flask, request, send_file
 import requests
 from io import BytesIO
-
+from config import secret_key
 app = Flask(__name__)
 
 
 @app.route('/download_image', methods=['GET'])
 def download_image():
+    if not request.args.get('password'):
+        return "Missing 'password' parameter", 400
+
+    if request.args.get('password') != secret_key:
+        return "Invalid password", 401
+
     # Get the 'url' parameter from the request
     image_url = request.args.get('url')
 
